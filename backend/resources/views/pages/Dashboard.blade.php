@@ -113,6 +113,7 @@
         width: 25px;
         height: 25px;
     }
+
     .update-modal-overlay {
         display: none;
         position: fixed;
@@ -184,9 +185,14 @@
                                         onclick="editProduct('{{ $item->id }}', '{{ $item->name }}', '{{ $item->description }}', '{{ $item->category }}', '{{ $item->size }}', '{{ $item->price }}', '{{ $item->is_available }}' , '{{ $item->image }}')">
                                         <img style="cursor: pointer;" src="../../../assets/edit.webp" alt="">
                                     </button>
-                                    <button type="submit">
-                                        <img style="cursor: pointer;" src="../../../assets/delete.webp" alt="">
-                                    </button>
+                                    <form action="{{ route('archive.product', $item->id) }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit">
+                                            <img style="cursor: pointer;" src="../../../assets/delete.webp"
+                                                alt="">
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -199,9 +205,9 @@
         <div id="updateFormModal" class="update-modal-overlay">
             <div class="modal-content">
                 <button type="button" id="closeUpdateModalBtn" class="modal-close-btn">&times;</button>
-                <form id="updateForm"  method="post" enctype="multipart/form-data"
-                    class="form-container">
+                <form id="updateForm" method="post" enctype="multipart/form-data" class="form-container">
                     @csrf
+                    @method('PUT')
                     <h1>Update Product</h1>
                     <div class="form-group">
                         <label for="name" class="form-label">Name</label>
@@ -273,7 +279,7 @@
                 document.getElementById('closeUpdateModalBtn').onclick = function() {
                     document.getElementById('updateFormModal').style.display = 'none';
                 };
-                
+
             }
         </script>
 </body>

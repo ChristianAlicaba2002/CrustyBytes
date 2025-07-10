@@ -7,13 +7,17 @@ export default function Home() {
     const auth = getAuth();
 
     useEffect(() => {
-        const isNotSignEnd = auth.onAuthStateChanged((auth) => {
-            if (!auth) {
-                navigate('/');
-            }
-        })
-        return ()=> isNotSignEnd()
-    }, [auth, navigate]);
+        try {
+            const isUserSignEnd = auth.onAuthStateChanged((auth) => {
+                if (!auth) {
+                    navigate('/')
+                }
+            })
+            return () => isUserSignEnd()
+        } catch (error) {
+            console.log('something is error', error)
+        }
+    }, [auth, navigate])
 
     const signOutUser = async () => {
         try {

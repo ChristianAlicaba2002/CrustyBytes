@@ -33,4 +33,6 @@ Route::post('/logout',[AdminController::class, 'logout'])->name('logout.admin');
 
 //Product Routes
 Route::post('/add_product', [ProductController::class , 'create'])->name('create.product');
-Route::post('/update_product/{id}',[ProductController::class , 'update'])->name('update.product');
+Route::put('/update_product/{id}',[ProductController::class , 'update'])->name('update.product');
+Route::delete('/archive_product/{id}',[ProductController::class , 'archive'])->name('archive.product');
+Route::delete('/delete_product/{id}',[ProductController::class , 'delete'])->name('delete.product');

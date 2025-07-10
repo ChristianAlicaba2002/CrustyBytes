@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Application\Product\ProductHandler;
+use App\Models\ArchiveItems;
 
 class ProductController extends Controller
 {
@@ -97,10 +98,36 @@ class ProductController extends Controller
             $request->category,
             $request->size,
             $request->price,
-            $data['image'] ?? null,
+            $data['image'] ?? $item->image,
             $request->is_available ? true : false
         );
 
         return redirect()->route('admin.dashboard')->with('success', 'Product updated successfully.');
+    }
+    
+    public function delete($id)
+    {
+        $item = Products::where('id', $id)->first();
+
+        if (!$item) {
+            return redirect()->route('admin.dashboard')->with('error', 'Product not found.');
+        }
+
+        $this->productHandler->deleteProduct($id);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Product deleted successfully.');
+    }
+
+    public function archive($id)
+    {
+        $item = Products::where('id', $id)->first();
+
+        if (!$item) {
+            return redirect()->route('admin.dashboard')->with('error', 'Product not found.');
+        }
+
+        $this->productHandler->archiveProduct($id);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Product archived successfully.');
     }
 }

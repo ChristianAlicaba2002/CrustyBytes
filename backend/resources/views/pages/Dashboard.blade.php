@@ -34,6 +34,7 @@
         margin-left: 15rem;
         color: #666;
         margin-bottom: 0.5rem;
+        font-size: 1.125rem;
     }
 
     .table-container {
@@ -65,7 +66,7 @@
 
     .custom-table th,
     .custom-table td {
-        padding: 0.75rem 3rem;
+        padding: 0.75rem 2.7rem 0.75rem 3rem;
         border: 1px solid #eee;
         text-align: left;
     }

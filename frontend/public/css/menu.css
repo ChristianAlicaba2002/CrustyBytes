@@ -1,11 +1,3 @@
-.pizza-span{
-    animation: rotateNow 6s linear infinite;
-}
-
-@keyframes rotateNow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 .loader {
   width: 50px;
   aspect-ratio: 1;

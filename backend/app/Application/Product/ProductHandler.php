@@ -8,7 +8,7 @@ use App\Models\Products as ProductModel;
 
 class ProductHandler
 {
-    public function __construct(private ProductRepository $productRepository) 
+    public function __construct(private ProductRepository $productRepository)
     {
         return $this->productRepository = $productRepository;
     }
@@ -31,8 +31,7 @@ class ProductHandler
         float $price,
         ?string $image,
         bool $isAvailable
-    )
-    {
+    ) {
         $product = new Product(
             id: $id,
             name: $name,
@@ -44,32 +43,51 @@ class ProductHandler
             is_available: $isAvailable
         );
 
-       return $this->productRepository->createProduct($product);
+        return $this->productRepository->createProduct($product);
     }
 
     public function updateProduct(
-            int $id,
-            string $name,
-            string $description,
-            string $category,
-            string $size,
-            float $price,
-            ?string $image,
-            bool $isAvailable
-    )
-    {
+        int $id,
+        string $name,
+        string $description,
+        string $category,
+        string $size,
+        float $price,
+        ?string $image,
+        bool $isAvailable
+    ) {
         $update = new Product(
-             $id,
-             $name,
-             $description,
-             $category,
-             $size,
-             $price,
-             $image,
-             $isAvailable
+            $id,
+            $name,
+            $description,
+            $category,
+            $size,
+            $price,
+            $image,
+            $isAvailable
         );
-        
+
         $this->productRepository->updateProduct($update);
     }
+
+    public function deleteProduct(int $id)
+    {
+        $product = ProductModel::where('id', $id)->first();
+
+        if (!$product) {
+            return false; // Product not found
+        }
+        return $this->productRepository->deleteProduct($id);
+    }
+
+    public function archiveProduct(int $id)
+    {
+        $product = ProductModel::where('id', $id)->first();
+
+        if (!$product) {
+            return false; // Product not found
+        }
+        
+        return $this->productRepository->archiveProduct($id);
+    }
 }
-    

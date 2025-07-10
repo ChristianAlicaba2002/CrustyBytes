@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Products;
+use App\Models\ArchiveItems;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AdminMiddleware;
@@ -21,6 +22,11 @@ Route::middleware(['auth:admin'])->group(function () {
         $items = Products::orderBy('created_at', 'desc')->get();
         return view('pages.Dashboard', compact('items'));
     })->name('admin.dashboard')->middleware(AdminMiddleware::class);
+
+    Route::get('/archive', function () {
+        $archiveItems = ArchiveItems::orderBy('created_at', 'desc')->get();
+        return view('pages.ArchiveItem', compact('archiveItems'));
+    })->name('admin.archive')->middleware(AdminMiddleware::class);
 });
 
 

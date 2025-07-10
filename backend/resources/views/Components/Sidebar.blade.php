@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Sidebar</title>
 </head>
 
 <body>
@@ -14,12 +14,13 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
         }
 
         .sidebar {
-            background-color: #f4f4f4;
+            background-color: orange;
             padding: 20px;
-            width: 250px;
+            width: 240px;
             float: left;
             min-height: 100vh;
         }
@@ -42,7 +43,7 @@
         }
 
         .sidebar ul li a:hover {
-            color: #0077ff;
+            color: #ffffff;
         }
 
         .isActive {
@@ -77,7 +78,7 @@
             </li>
             <li><a href="#">User Management</a></li>
             <li><a href="#">Product Orders</a></li>
-            <li><a href="#">Archive Products</a></li>
+            <li><a href="{{ route('admin.archive') }}">Archive Products</a></li>
         </ul>
     </div>
 

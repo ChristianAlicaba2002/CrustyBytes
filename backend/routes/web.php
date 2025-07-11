@@ -7,38 +7,45 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Product\ProductController;
+use App\Http\Middleware\PreventBackHistory;
 
 Route::get('/', function () {
-    if(Auth::guard('admin')->check()) {
+    if(Auth::guard('admin')->check())
+    {
         return redirect()->route('admin.dashboard');
     }
     return view('Auth.Login');
-})->name('login.view');
+})->name('login');
 
 
+Route::middleware('auth:admin')->group(function () {
 
-Route::middleware(['auth:admin'])->group(function () {
     Route::get('/dashboard', function () {
-        $items = Products::orderBy('created_at', 'desc')->get();
+        $items = Products::orderBy('created_at', 'desc')->paginate(3);
         return view('pages.Dashboard', compact('items'));
-    })->name('admin.dashboard')->middleware(AdminMiddleware::class);
+    })->name('admin.dashboard');
 
     Route::get('/archive', function () {
         $archiveItems = ArchiveItems::orderBy('created_at', 'desc')->get();
         return view('pages.ArchiveItem', compact('archiveItems'));
-    })->name('admin.archive')->middleware(AdminMiddleware::class);
+    })->name('admin.archive');
+    
 });
 
 
 
 
 //Admin Routes
-Route::post('/login',[AdminController::class, 'login'])->name('login.admin');
-Route::post('/logout',[AdminController::class, 'logout'])->name('logout.admin');
+Route::controller(AdminController::class)->group(function () {
+    Route::post('/login', 'login')->name('login.admin');
+    Route::post('/logout', 'logout')->name('logout.admin');
+});
 
 
 //Product Routes
-Route::post('/add_product', [ProductController::class , 'create'])->name('create.product');
-Route::put('/update_product/{id}',[ProductController::class , 'update'])->name('update.product');
-Route::delete('/archive_product/{id}',[ProductController::class , 'archive'])->name('archive.product');
-Route::delete('/delete_product/{id}',[ProductController::class , 'delete'])->name('delete.product');
+Route::controller(ProductController::class)->group(function () {
+    Route::post('/add_product', 'create')->name('create.product');
+    Route::put('/update/product/{id}', 'update')->name('update.product');
+    Route::delete('/archive/product/{id}', 'archive')->name('archive.product');
+    Route::delete('/delete/product/{id}', 'delete')->name('delete.product');
+});

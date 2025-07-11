@@ -10,8 +10,7 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Middleware\PreventBackHistory;
 
 Route::get('/', function () {
-    if(Auth::guard('admin')->check())
-    {
+    if (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
     }
     return view('Auth.Login');
@@ -21,15 +20,15 @@ Route::get('/', function () {
 Route::middleware('auth:admin')->group(function () {
 
     Route::get('/dashboard', function () {
-        $items = Products::orderBy('created_at', 'desc')->paginate(3);
-        return view('pages.Dashboard', compact('items'));
+        $items = Products::orderBy('created_at', 'desc')->paginate(4);
+        $totalItems = Products::all();
+        return view('pages.Dashboard', compact('items', 'totalItems'));
     })->name('admin.dashboard');
 
     Route::get('/archive', function () {
         $archiveItems = ArchiveItems::orderBy('created_at', 'desc')->get();
         return view('pages.ArchiveItem', compact('archiveItems'));
     })->name('admin.archive');
-    
 });
 
 

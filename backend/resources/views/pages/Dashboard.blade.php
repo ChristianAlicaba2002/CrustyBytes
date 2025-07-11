@@ -269,7 +269,7 @@
         <script>
             function editProduct(id, name, description, category, size, price, is_available, image) {
                 document.getElementById('updateFormModal').style.display = 'block'
-                document.getElementById('updateForm').action = `/update_product/${id}`
+                document.getElementById('updateForm').action = `/update/product/${id}`
 
                 document.getElementById('idID').value = id
                 document.getElementById('nameID').value = name

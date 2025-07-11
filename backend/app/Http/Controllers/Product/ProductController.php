@@ -107,15 +107,15 @@ class ProductController extends Controller
     
     public function delete($id)
     {
-        $item = Products::where('id', $id)->first();
+        $item = ArchiveItems::where('product_id', $id)->first();
 
         if (!$item) {
-            return redirect()->route('admin.dashboard')->with('error', 'Product not found.');
+            return redirect()->route('admin.archive')->with('error', 'Product not found.');
         }
 
         $this->productHandler->deleteProduct($id);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Product deleted successfully.');
+        return redirect()->route('admin.archive')->with('success', 'Product deleted successfully.');
     }
 
     public function archive($id)

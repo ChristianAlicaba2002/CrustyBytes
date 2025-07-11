@@ -51,7 +51,7 @@ class EloquentProductRepository implements ProductRepository
 
     public function deleteProduct(int $id)
     {
-        $product = ProductModel::where('id', $id)->first();
+        $product = ArchiveItems::where('product_id', $id)->first();
 
         // Check if the product exists
         if ($product) {

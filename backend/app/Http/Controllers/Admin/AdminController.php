@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -21,28 +23,25 @@ class AdminController extends Controller
 
         if ($validator->fails()) {
             // Redirect back with errors
-            return redirect()->route('login.view')->with('error', $validator->errors());
+            return redirect()->route('login')->with('error', $validator->errors());
         }
 
-        $admin = Admin::where('name', $request->name)->first();
+        $admin = $request->only('name', 'password');
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return redirect()->route('login.view')->with('error', 'Invalid credentials');
-        }
-
-        if (Auth::guard('admin')->attempt($request->only('name', 'password'))) {
+        if (Auth::guard('admin')->attempt($admin, $request->boolean('remember'))) {
             // Authentication passed
-            $request->session()->regenerate();
             return redirect()->route('admin.dashboard');
         }
+
+        return redirect()->route('login')->with('error', 'Invalid credentials');
+
     }
 
     public function logout(Request $request)
     {
+        Session::flush();
         Auth::guard('admin')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
-        return redirect()->route('login.view')->with('success', 'Logged out successfully');
+        return redirect()->route('login')->with('success', 'Logged out successfully');
     }
 }

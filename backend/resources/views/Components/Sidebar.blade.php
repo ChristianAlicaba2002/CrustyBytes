@@ -64,6 +64,27 @@
             height: 55%;
             text-align: center;
         }
+
+        .logout-container{
+            display: flex;
+            justify-content: center;
+        }
+        .logout-icon {
+            position: absolute;
+            margin-top: 23%;
+            border-radius: 50%;
+            background-color: transparent;
+            border: 0;
+            transition: .3s ease-in-out;
+        }
+
+        .logout-icon img {
+            width: 52px;
+            height: 50px;
+            border: 0;
+            cursor: pointer;
+        }
+        
     </style>
     <div class="sidebar">
         <div class="logo">
@@ -79,6 +100,17 @@
             <li><a href="#">User Management</a></li>
             <li><a href="#">Product Orders</a></li>
             <li><a href="{{ route('admin.archive') }}">Archive Products</a></li>
+            <li>
+                <form action="{{ route('logout.admin') }}" method="post">
+                    @csrf
+                    <div class="logout-container">
+
+                        <button class="logout-icon" type="submit">
+                            <img src="../../../assets/logout.webp" alt="">
+                        </button>
+                    </div>
+                </form>
+            </li>
         </ul>
     </div>
 

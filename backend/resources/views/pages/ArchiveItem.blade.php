@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="../../../assets/logo.webp" type="image/x-icon">
-    <title>{{Auth::guard('admin')->user()->name}} Archive Items</title>
+    <title>{{ Auth::guard('admin')->user()->name }} Archive Items</title>
 </head>
 <style>
     * {
@@ -70,7 +70,8 @@
         color: #111827;
         font-weight: 700;
     }
-    p{
+
+    p {
         margin-bottom: 1.5rem;
         font-size: 1.125rem;
         color: #6b7280;
@@ -121,34 +122,42 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($archiveItems as $item)
-                    <tr>
-                        <td>{{ $item->product_id }}</td>
-                        <td><img class="product-image" src="{{ asset('images/' . $item->image) }}"
-                                alt="{{ $item->name }}" width="100"></td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td>{{ $item->category }}</td>
-                        <td>{{ $item->size }}</td>
-                        <td>&#8369;{{ $item->price }}</td>
-                        <td>{{ $item->is_available ? 'Yes' : 'No' }}</td>
-                        <td>
-                            <div class="button-container">
-                                <button>
-                                    <img style="cursor: pointer;" src="../../../assets/restore.webp" alt="">
-                                </button>
-                                <form action="" method="post">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit">
-                                        <img style="cursor: pointer;" src="../../../assets/delete.webp" alt="">
+                @if (count($archiveItems) > 0)
+                    @foreach ($archiveItems as $item)
+                        <tr>
+                            <td>{{ $item->product_id }}</td>
+                            <td><img class="product-image" src="{{ asset('images/' . $item->image) }}"
+                                    alt="{{ $item->name }}" width="100"></td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->description }}</td>
+                            <td>{{ $item->category }}</td>
+                            <td>{{ $item->size }}</td>
+                            <td>&#8369;{{ $item->price }}</td>
+                            <td>{{ $item->is_available ? 'Yes' : 'No' }}</td>
+                            <td>
+                                <div class="button-container">
+                                    <button>
+                                        <img style="cursor: pointer;" src="../../../assets/restore.webp" alt="">
                                     </button>
-                                </form>
-                            </div>
+                                    <form action="{{ route('delete.product', $item->product_id) }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit">
+                                            <img style="cursor: pointer;" src="../../../assets/delete.webp"
+                                                alt="">
+                                        </button>
+                                    </form>
+                                </div>
 
-                        </td>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="9" style="color: red; font-weight:bold; text-align:center;">Don't have archive
+                            product </td>
                     </tr>
-                @endforeach
+                @endif
             </tbody>
         </table>
     </div>

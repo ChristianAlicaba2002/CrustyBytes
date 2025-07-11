@@ -39,7 +39,7 @@
     <div class="dashboard-col">
         <div class="dashboard-card bg-primary">
             <div class="dashboard-title">Products</div>
-            <div class="dashboard-value">{{ count($items) ?? 0 }}</div>
+            <div class="dashboard-value">{{ count($totalItems) ?? 0 }}</div>
         </div>
     </div>
     <!-- User Total Card -->

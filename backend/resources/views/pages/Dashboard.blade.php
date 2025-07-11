@@ -142,7 +142,8 @@
         @include('Components.Form')
         <div class="table-container">
             <input type="search" name="search" id="search" placeholder="Search product...">
-            <div style="width:50.9%; padding:.90rem; margin-top:-3rem; margin-left:36%; display:flex; flex-direction:row; justify-content:flex-end; position:fixed;">
+            <div
+                style="width:50.9%; padding:.90rem; margin-top:-3rem; margin-left:36%; display:flex; flex-direction:row; justify-content:flex-end; position:fixed;">
                 {{ $items->links('vendor/pagination/simple-default') }}
             </div>
             <table class="custom-table">
@@ -160,47 +161,56 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($items as $item)
-                        <tr>
-                            <td>{{ $item->id }}</td>
-                            <td>
-                                @if ($item->image)
-                                    <img class="product-image" src="{{ asset('/images/' . $item->image) }}"
-                                        alt="Image">
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td>{{ $item->name }}</td>
-                            <td>{{ $item->description }}</td>
-                            <td>{{ $item->category }}</td>
-                            <td>{{ $item->size }}</td>
-                            <td>&#8369;{{ number_format($item->price, 2) }}</td>
-                            <td>
-                                @if ($item->is_available)
-                                    <span class="available-yes">Yes</span>
-                                @else
-                                    <span class="available-no">No</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="button-container">
-                                    <button type="button"
-                                        onclick="editProduct('{{ $item->id }}', '{{ $item->name }}', '{{ $item->description }}', '{{ $item->category }}', '{{ $item->size }}', '{{ $item->price }}', '{{ $item->is_available }}' , '{{ $item->image }}')">
-                                        <img style="cursor: pointer;" src="../../../assets/edit.webp" alt="">
-                                    </button>
-                                    <form action="{{ route('archive.product', $item->id) }}" method="post">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit">
-                                            <img style="cursor: pointer;" src="../../../assets/delete.webp"
+                    @if (count($items) > 0)
+                        @foreach ($items as $item)
+                            <tr>
+                                <td>{{ $item->id }}</td>
+                                <td>
+                                    @if ($item->image)
+                                        <img class="product-image" src="{{ asset('/images/' . $item->image) }}"
+                                            alt="Image">
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->description }}</td>
+                                <td>{{ $item->category }}</td>
+                                <td>{{ $item->size }}</td>
+                                <td>&#8369;{{ number_format($item->price, 2) }}</td>
+                                <td>
+                                    @if ($item->is_available)
+                                        <span class="available-yes">Yes</span>
+                                    @else
+                                        <span class="available-no">No</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="button-container">
+                                        <button type="button"
+                                            onclick="editProduct('{{ $item->id }}', '{{ $item->name }}', '{{ $item->description }}', '{{ $item->category }}', '{{ $item->size }}', '{{ $item->price }}', '{{ $item->is_available }}' , '{{ $item->image }}')">
+                                            <img style="cursor: pointer;" src="../../../assets/edit.webp"
                                                 alt="">
                                         </button>
-                                    </form>
-                                </div>
+                                        <form action="{{ route('archive.product', $item->id) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit">
+                                                <img style="cursor: pointer;" src="../../../assets/delete.webp"
+                                                    alt="">
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="9" style="color: red; text-align:center; font-weight:bold;">Don't have any
+                                products
                             </td>
                         </tr>
-                    @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>

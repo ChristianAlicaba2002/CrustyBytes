@@ -4,6 +4,7 @@ namespace App\Application\Product;
 
 use App\Domain\Product\ProductRepository;
 use App\Domain\Product\Product;
+use App\Models\ArchiveItems;
 use App\Models\Products as ProductModel;
 
 class ProductHandler
@@ -72,7 +73,7 @@ class ProductHandler
 
     public function deleteProduct(int $id)
     {
-        $product = ProductModel::where('id', $id)->first();
+        $product = ArchiveItems::where('product_id', $id)->first();
 
         if (!$product) {
             return false; // Product not found

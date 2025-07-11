@@ -142,6 +142,9 @@
         @include('Components.Form')
         <div class="table-container">
             <input type="search" name="search" id="search" placeholder="Search product...">
+            <div style="width:50.9%; padding:.90rem; margin-top:-3rem; margin-left:36%; display:flex; flex-direction:row; justify-content:flex-end; position:fixed;">
+                {{ $items->links('vendor/pagination/simple-default') }}
+            </div>
             <table class="custom-table">
                 <thead>
                     <tr>

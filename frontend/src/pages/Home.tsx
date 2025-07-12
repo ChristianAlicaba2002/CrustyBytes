@@ -177,7 +177,7 @@ export default function Home() {
         setItemInCart(removeItem.filter((item: TCartItem) => item.uId === user.uId));
     }
 
-    
+
     const checkOutPreview = (userId: string) => {
         navigate(`/checkoutPreview/${userId}`)
     }
@@ -235,7 +235,7 @@ export default function Home() {
             </section>
 
             {/* Product Grid */}
-            <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 pb-16">
+            <div className="max-w-full mx-auto px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 pb-16">
                 {filteredProducts.map((item) => {
                     const imageUrl = `http://127.0.0.1:8000/api/storage/${item.image}`
                     return <div key={item.id}>

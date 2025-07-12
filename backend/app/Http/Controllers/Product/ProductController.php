@@ -21,7 +21,7 @@ class ProductController extends Controller
     {
         $data = Validator::make(array_map('trim', $request->all()), [
             'name' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'category' => 'required|string|in:pizza,drink,dessert',
             'size' => 'required|string|in:small,medium,large',
             'price' => 'required|numeric|min:0',
@@ -49,7 +49,7 @@ class ProductController extends Controller
         $this->productHandler->createProduct(
             $product_id,
             $request->name,
-            $request->description,
+            $request->description ?? "",
             $request->category,
             $request->size,
             $request->price,
@@ -70,7 +70,7 @@ class ProductController extends Controller
 
         $data = Validator::make(array_map('trim', $request->all()), [
             'name' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'category' => 'required|string|in:pizza,drink,dessert',
             'size' => 'required|string|in:small,medium,large',
             'price' => 'required|numeric|min:0',
@@ -94,7 +94,7 @@ class ProductController extends Controller
         $this->productHandler->updateProduct(
             $item->id,
             $request->name,
-            $request->description,
+            $request->description || "",
             $request->category,
             $request->size,
             $request->price,

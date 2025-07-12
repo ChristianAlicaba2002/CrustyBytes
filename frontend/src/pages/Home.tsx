@@ -6,6 +6,7 @@ import type { TProducts } from "../Types";
 import type { TCartItem } from "../Types";
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import { PiSignOutBold } from "react-icons/pi";
+import { GrAdd } from "react-icons/gr";
 import UserLogo from "../assets/images/person.webp";
 
 export default function Home() {
@@ -19,11 +20,15 @@ export default function Home() {
         image: ""
     })
     const [products, setProducts] = useState<TProducts[]>([])
-    const [searchTerm, setSearchTerm] = useState('');
+    const [search, setSearch] = useState('');
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [itemInCart, setItemInCart] = useState<TCartItem[] | null>([])
 
 
+    //Search the product
+    const filteredProducts = products.filter((product: TProducts) =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+    );
 
     //Check if the user if sign end if not redirect into the welcome page
     useEffect(() => {
@@ -89,7 +94,6 @@ export default function Home() {
                 const item = await response.json()
                 if (item) {
 
-                    console.log(item)
                     setProducts(item.data)
                 }
             } catch (error) {
@@ -99,7 +103,6 @@ export default function Home() {
         fetchTheProducts()
     }, [])
 
-
     // Add To Cart Toggle
     const addToCartItem = (item: TProducts) => {
         let quantity = 0
@@ -107,6 +110,8 @@ export default function Home() {
 
         const pushToCart = {
             id: item.id,
+            uId: user.uId,
+            username: user.name,
             image: item.image,
             name: item.name,
             quantity: quantity += 1,
@@ -114,25 +119,69 @@ export default function Home() {
             size: item.size,
             price: item.price
         }
+
         // Check if item already exists in cart
         const existingIndex = existingCart.findIndex((cartItem: TCartItem) => cartItem.id === item.id);
 
         if (existingIndex !== -1) {
             existingCart[existingIndex].quantity += 1;
             localStorage.setItem('item', JSON.stringify(existingCart));
+
+            // Filter the item if the item in the cart of user is equal on the user who signend 
+            const userCartItems = existingCart.filter((cartItem: TCartItem) => cartItem.uId === user.uId);
+
+            // Update the Item in cart
+            setItemInCart(userCartItems);
+
             return;
         }
 
         existingCart.push(pushToCart)
 
+        // Update the localStorage
         localStorage.setItem('item', JSON.stringify(existingCart))
+
+        const userCartItems = existingCart.filter((cartItem: TCartItem) => cartItem.uId === user.uId);
+        setItemInCart(userCartItems);
     }
 
-    //Get the item in the localstorage
+    //Get the item of the user from localstorage
     useEffect(() => {
-        const getItemInCart = JSON.parse(localStorage.getItem('item') || '[]')
-        setItemInCart(getItemInCart)
-    }, [itemInCart])
+        try {
+            const getItemInCart = JSON.parse(localStorage.getItem('item') || '[]');
+
+            // Filter cart items for the current user
+            const userCartItems = getItemInCart.filter((item: TCartItem) => item.uId === user.uId);
+
+            // Update the Item in cart
+            setItemInCart(userCartItems);
+
+        } catch (error) {
+            console.error(error)
+        }
+    }, [user.uId])
+
+
+    //Remove Item cart handle
+    const removeInCart = (item: TCartItem) => {
+        const getItemInCart = JSON.parse(localStorage.getItem('item') || '[]');
+
+        // Remove only the item for the current user and matching id
+        const removeItem = getItemInCart.filter(
+            (itemInCart: TCartItem) => !(itemInCart.id === item.id && itemInCart.uId === user.uId)
+        );
+        //Update the localstorage
+        localStorage.setItem('item', JSON.stringify(removeItem));
+
+        //Update also teh Item in cart
+        setItemInCart(removeItem.filter((item: TCartItem) => item.uId === user.uId));
+    }
+
+    
+    const checkOutPreview = (userId: string) => {
+        navigate(`/checkoutPreview/${userId}`)
+    }
+
 
     return (
 
@@ -153,8 +202,8 @@ export default function Home() {
                         <input
                             type="text"
                             placeholder="Search meals..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                             className="w-full border border-orange-200 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
                         <FaSearch className="absolute left-3 top-2.5 text-orange-400" />
@@ -187,7 +236,7 @@ export default function Home() {
 
             {/* Product Grid */}
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 pb-16">
-                {products.map((item) => {
+                {filteredProducts.map((item) => {
                     const imageUrl = `http://127.0.0.1:8000/api/storage/${item.image}`
                     return <div key={item.id}>
                         <div
@@ -265,6 +314,11 @@ export default function Home() {
                                     <span className="text-orange-500 font-bold whitespace-nowrap">
                                         &#8369;{item.price}
                                     </span>
+                                    <span className="relative -mt-14">
+                                        <button type="button" onClick={() => removeInCart(item)} >
+                                            <GrAdd className="rotate-45 text-red-500" />
+                                        </button>
+                                    </span>
                                 </div>
                             );
                         })}
@@ -274,7 +328,7 @@ export default function Home() {
 
                 {/* Checkout Button */}
                 <div className="p-6 border-t border-orange-100">
-                    <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold text-sm transition">
+                    <button type="button" onClick={() => checkOutPreview(user.uId)} className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold text-sm transition">
                         🧾 Checkout
                     </button>
                 </div>

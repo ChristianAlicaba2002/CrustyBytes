@@ -46,7 +46,7 @@
     <div class="dashboard-col">
         <div class="dashboard-card bg-success">
             <div class="dashboard-title">Users</div>
-            <div class="dashboard-value">{{ $userTotal ?? 0 }}</div>
+            <div class="dashboard-value">{{ count($totalUser) ?? 0 }}</div>
         </div>
     </div>
     <!-- Orders Total Card -->

@@ -8,6 +8,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Middleware\PreventBackHistory;
+use App\Models\User;
 
 Route::get('/', function () {
     if (Auth::guard('admin')->check()) {
@@ -22,7 +23,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/dashboard', function () {
         $items = Products::orderBy('created_at', 'desc')->paginate(4);
         $totalItems = Products::all();
-        return view('pages.Dashboard', compact('items', 'totalItems'));
+        $totalUser  = User::all();
+        return view('pages.Dashboard', compact('items', 'totalItems','totalUser'));
     })->name('admin.dashboard');
 
     Route::get('/archive', function () {

@@ -113,10 +113,10 @@
                     <th>ID</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Description</th>
                     <th>Category</th>
                     <th>Size</th>
                     <th>Price</th>
+                    <th>Description</th>
                     <th>Available</th>
                     <th>Action</th>
                 </tr>
@@ -129,11 +129,11 @@
                             <td><img class="product-image" src="{{ asset('images/' . $item->image) }}"
                                     alt="{{ $item->name }}" width="100"></td>
                             <td>{{ $item->name }}</td>
-                            <td>{{ $item->description }}</td>
                             <td>{{ $item->category }}</td>
                             <td>{{ $item->size }}</td>
                             <td>&#8369;{{ $item->price }}</td>
-                            <td>{{ $item->is_available ? 'Yes' : 'No' }}</td>
+                            <td>{{ $item->description }}</td>
+                            <td style="color: {{$item->is_available ? 'green' : 'red'}}">{{ $item->is_available ? 'Yes' : 'No' }}</td>
                             <td>
                                 <div class="button-container">
                                     <button>

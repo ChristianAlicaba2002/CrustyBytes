@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { googleProvider, githubProvider } from '../firebase-config.js';
 import {
     getAuth,

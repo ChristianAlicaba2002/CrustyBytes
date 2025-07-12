@@ -66,7 +66,7 @@
 
     .custom-table th,
     .custom-table td {
-        padding: 0.75rem 2.7rem 0.75rem 3rem;
+        padding: 0.75rem 3.5rem 0.75rem 3rem;
         border: 1px solid #eee;
         text-align: left;
     }
@@ -142,20 +142,20 @@
         @include('Components.Form')
         <div class="table-container">
             <input type="search" name="search" id="search" placeholder="Search product...">
-            <div
-                style="width:50.9%; padding:.90rem; margin-top:-3rem; margin-left:36%; display:flex; flex-direction:row; justify-content:flex-end; position:fixed;">
-                {{ $items->links('vendor/pagination/simple-default') }}
-            </div>
             <table class="custom-table">
+                <div
+                    style="width:50.9%; padding:.90rem; margin-top:-3rem; margin-left:50%; display:flex; flex-direction:row; justify-content:flex-end;">
+                    {{ $items->links('vendor/pagination/simple-default') }}
+                </div>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Image</th>
                         <th>Name</th>
-                        <th>Description</th>
                         <th>Category</th>
                         <th>Size</th>
                         <th>Price</th>
+                        <th>Description</th>
                         <th>Available</th>
                         <th>Action</th>
                     </tr>
@@ -174,10 +174,10 @@
                                     @endif
                                 </td>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->description }}</td>
                                 <td>{{ $item->category }}</td>
                                 <td>{{ $item->size }}</td>
                                 <td>&#8369;{{ number_format($item->price, 2) }}</td>
+                                <td>{{ $item->description }}</td>
                                 <td>
                                     @if ($item->is_available)
                                         <span class="available-yes">Yes</span>
@@ -231,7 +231,7 @@
 
                     <div class="form-group">
                         <label for="description" class="form-label">Description</label>
-                        <textarea name="description" id="descriptionID" rows="3" required class="form-textarea"></textarea>
+                        <textarea name="description" id="descriptionID" rows="3" class="form-textarea"></textarea>
                     </div>
 
                     <div class="form-group">

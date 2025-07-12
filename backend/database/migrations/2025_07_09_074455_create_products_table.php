@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id('id')->primary()->autoIncrement(false);
             $table->string('name');
-            $table->text('description')->nullable();
+            $table->string('description')->nullable()->default('This item has no description yet.');
             $table->enum('category', ['pizza','drink','dessert'])->default('pizza');
             $table->enum('size', ['small', 'medium', 'large'])->default('medium');
             $table->decimal('price', 8, 2);

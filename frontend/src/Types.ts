@@ -19,3 +19,6 @@ export type TProducts = {
     image?: string;
     is_available?: boolean;
 }
+export type TCartItem = TProducts & {
+    quantity: number
+}

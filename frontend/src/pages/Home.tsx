@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { TUser } from "../Types";
 import type { TProducts } from "../Types";
+import type { TCartItem } from "../Types";
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
+import { PiSignOutBold } from "react-icons/pi";
+import UserLogo from "../assets/images/person.webp";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -18,6 +21,7 @@ export default function Home() {
     const [products, setProducts] = useState<TProducts[]>([])
     const [searchTerm, setSearchTerm] = useState('');
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [itemInCart, setItemInCart] = useState<TCartItem[] | null>([])
 
 
 
@@ -45,7 +49,6 @@ export default function Home() {
         }
     }, [auth, navigate])
 
-
     //Passing the user data in the BACKEND
     useEffect(() => {
         const postUserData = async () => {
@@ -67,12 +70,10 @@ export default function Home() {
         postUserData()
     }, [user])
 
-
     //Sign out button
     const signOutUser = async () => {
         try {
             await signOut(auth);
-            console.log("User signed out");
             navigate('/');
         } catch (error) {
             console.error("Error signing out:", error);
@@ -99,13 +100,39 @@ export default function Home() {
     }, [])
 
 
+    // Add To Cart Toggle
     const addToCartItem = (item: TProducts) => {
+        let quantity = 0
         const existingCart = JSON.parse(localStorage.getItem('item') || '[]')
 
-        existingCart.push(item)
+        const pushToCart = {
+            id: item.id,
+            image: item.image,
+            name: item.name,
+            quantity: quantity += 1,
+            category: item.category,
+            size: item.size,
+            price: item.price
+        }
+        // Check if item already exists in cart
+        const existingIndex = existingCart.findIndex((cartItem: TCartItem) => cartItem.id === item.id);
+
+        if (existingIndex !== -1) {
+            existingCart[existingIndex].quantity += 1;
+            localStorage.setItem('item', JSON.stringify(existingCart));
+            return;
+        }
+
+        existingCart.push(pushToCart)
 
         localStorage.setItem('item', JSON.stringify(existingCart))
     }
+
+    //Get the item in the localstorage
+    useEffect(() => {
+        const getItemInCart = JSON.parse(localStorage.getItem('item') || '[]')
+        setItemInCart(getItemInCart)
+    }, [itemInCart])
 
     return (
 
@@ -115,7 +142,7 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     {/* Logo & Welcome */}
                     <div className="flex items-center gap-4">
-                        <img src={user.image} alt="Logo" className="rounded-full h-10 w-10 object-contain" />
+                        <img src={user.image || UserLogo} alt="Logo" className="rounded-full h-10 w-10 object-contain" />
                         <h1 className="text-2xl font-bold text-orange-500">
                             Hello, {user.name || 'User'} 👋
                         </h1>
@@ -134,18 +161,19 @@ export default function Home() {
                     </div>
 
                     {/* Cart & Logout */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                         <button onClick={() => setIsCartOpen(true)} className="relative">
-                            <FaShoppingCart className="text-2xl text-orange-500" />
+                            <FaShoppingCart className="text-3xl text-orange-500 cursor-pointer" />
                             <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                                2
+                                {itemInCart?.length}
                             </span>
                         </button>
                         <button
                             onClick={signOutUser}
-                            className="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium shadow transition"
+                            type="button"
+                            className="bg-transparent cursor-pointer text-white px-4 py-2 rounded-lg font-medium transition"
                         >
-                            Logout
+                            <PiSignOutBold className="text-red-600 text-3xl" />
                         </button>
                     </div>
                 </div>
@@ -165,6 +193,12 @@ export default function Home() {
                         <div
                             className="bg-white border border-orange-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col"
                         >
+                            {item.is_available ? <p className="text-white text-sm px-2 py-1 rounded-2xl w-[5.5rem] text-center bg-green-500">
+                                {item.is_available ? "Available" : "Unavailable"}
+                            </p> : <p className="text-white text-sm px-2 py-1 rounded-2xl w-[6rem] text-center bg-red-500">
+                                {item.is_available ? "Available" : "Unavailable"}
+                            </p>
+                            }
                             <img
                                 src={imageUrl}
                                 alt="Product"
@@ -176,13 +210,14 @@ export default function Home() {
                                     <span className="text-lg font-semibold text-orange-500">&#8369;{item.price}</span>
                                 </div>
                                 <span className="text-sm font-semibold text-gray-400">Category: {item.category}</span>
-                                <span className="text-sm font-semibold text-gray-400">Size: {item.size}</span>
-                                <p className="text-gray-600 text-sm mb-6">
-                                    {item.description}
-                                </p>
-                                <button onClick={() => addToCartItem(item)} className="mt-auto bg-orange-500 hover:bg-orange-600 text-white w-full py-2.5 rounded-xl text-sm font-semibold transition duration-200">
+                                <span className="text-sm font-semibold text-gray-400 mb-5">Size: {item.size}</span>
+
+                                {item.is_available ? <button onClick={() => addToCartItem(item)} className="cursor-pointer mt-auto bg-orange-500 hover:bg-orange-600 text-white w-full py-2.5 rounded-xl text-sm font-semibold transition duration-200">
                                     🛒 Add to Cart
-                                </button>
+                                </button> : <button disabled className="cursor-not-allowed mt-auto bg-red-500 hover:bg-red-600 text-white w-full py-2.5 rounded-xl text-sm font-semibold transition duration-200">
+                                    Out of stock
+                                </button>}
+
                             </div>
                         </div>
                     </div>
@@ -195,28 +230,44 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-orange-500">Your Cart</h3>
                     <button
                         onClick={() => setIsCartOpen(false)}
-                        className="text-orange-400 hover:text-orange-600 font-semibold text-sm"
+                        className="text-orange-400 cursor-pointer hover:text-orange-600 font-semibold text-2xl"
                     >
-                        Close ✖
+                        ✖
                     </button>
                 </div>
 
                 {/* Cart Items Placeholder */}
                 <div className="p-6 space-y-4 overflow-y-auto h-[calc(100%-140px)]">
                     {/* Example Item */}
-                    <div className="flex justify-between items-center border-b pb-3">
-                        <div>
-                            <p className="font-semibold text-gray-700">Burger Supreme</p>
-                            <p className="text-sm text-gray-400">Qty: 2</p>
-                        </div>
-                        <span className="text-orange-500 font-bold">&#8369;199.00</span>
-                    </div>
-                    <div className="flex justify-between items-center border-b pb-3">
-                        <div>
-                            <p className="font-semibold text-gray-700">Cheesy Fries</p>
-                            <p className="text-sm text-gray-400">Qty: 1</p>
-                        </div>
-                        <span className="text-orange-500 font-bold">&#8369;89.00</span>
+                    <div className="flex flex-col gap-4">
+                        {itemInCart?.map((item: TCartItem) => {
+                            const imageUrl = `http://127.0.0.1:8000/api/storage/${item.image}`;
+                            return (
+                                <div
+                                    key={item.id}
+                                    className="flex items-center justify-between border-b pb-3"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src={imageUrl}
+                                            alt={item.name}
+                                            className="w-14 h-16 rounded object-cover"
+                                        />
+                                        <div>
+                                            <p className="font-semibold text-gray-700">{item.name}</p>
+                                            <p className="text-sm text-gray-400">{item.category}</p>
+                                            <p className="text-sm text-gray-400">{item.size}</p>
+                                            <p className="text-sm text-gray-400">
+                                                Qty: {item.quantity}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <span className="text-orange-500 font-bold whitespace-nowrap">
+                                        &#8369;{item.price}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
                     {/* Add dynamic items here later */}
                 </div>

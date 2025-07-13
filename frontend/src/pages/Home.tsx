@@ -1,12 +1,13 @@
 import { getAuth, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import type { TUser } from "../Types";
 import type { TProducts } from "../Types";
 import type { TCartItem } from "../Types";
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import { PiSignOutBold } from "react-icons/pi";
 import { GrAdd } from "react-icons/gr";
+import { FaArrowRight } from "react-icons/fa";
 import { MdHistory } from "react-icons/md";
 import UserLogo from "../assets/images/person.webp";
 
@@ -216,8 +217,8 @@ export default function Home() {
 
             // Calculate the new total from updatedCart
             const total = updatedCart
-                .filter((cartItem:TCartItem) => selectedItems.includes(String(cartItem.id)))
-                .reduce((sum:number, cartItem:TCartItem) => sum + cartItem.price * cartItem.quantity, 0);
+                .filter((cartItem: TCartItem) => selectedItems.includes(String(cartItem.id)))
+                .reduce((sum: number, cartItem: TCartItem) => sum + cartItem.price * cartItem.quantity, 0);
 
             setTotalPrice(total);
         }
@@ -291,7 +292,7 @@ export default function Home() {
                         <FaSearch className="absolute left-3 top-2.5 text-orange-400" />
                     </div>
 
-                    {/* Cart & Logout */}
+                    {/* Cart & Logout & View History*/}
                     <div className="flex items-center gap-8">
                         <button onClick={() => setIsCartOpen(true)} className="relative">
                             <FaShoppingCart className="text-3xl text-orange-500 cursor-pointer" />
@@ -299,9 +300,9 @@ export default function Home() {
                                 {itemInCart?.length}
                             </span>
                         </button>
-                        <button onClick={() => setIsCartOpen(true)} className="relative">
+                        <Link to="/view-history" className="relative">
                             <MdHistory className="text-4xl -mt-1.5 -mr-4 text-orange-500 cursor-pointer" />
-                        </button>
+                        </Link>
                         <button
                             onClick={signOutUser}
                             type="button"
@@ -321,7 +322,7 @@ export default function Home() {
 
             {/* Product Grid */}
             <div className="max-w-full mx-auto px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 pb-16">
-                {filteredProducts.map((item) => {
+                {filteredProducts.sort((a, b) => a.name.localeCompare(b.name)).map((item) => {
                     const imageUrl = `http://127.0.0.1:8000/api/storage/${item.image}`
                     return <div key={item.id}>
                         <div
@@ -366,7 +367,7 @@ export default function Home() {
                         onClick={() => setIsCartOpen(false)}
                         className="text-orange-400 cursor-pointer hover:text-orange-600 font-semibold text-2xl"
                     >
-                        ✖
+                        <FaArrowRight />
                     </button>
                 </div>
 
@@ -374,7 +375,7 @@ export default function Home() {
                 <div className="p-6 space-y-4 overflow-y-auto h-[calc(100%-140px)]">
                     {/* Example Item */}
                     <div className="flex flex-col gap-4">
-                        {itemInCart?.map((item: TCartItem) => {
+                        {itemInCart && itemInCart?.length > 0 ? itemInCart?.map((item: TCartItem) => {
                             const imageUrl = `http://127.0.0.1:8000/api/storage/${item.image}`;
                             return (
                                 <div
@@ -393,7 +394,7 @@ export default function Home() {
                                             alt={item.name}
                                             className="w-18 h-16 rounded object-cover"
                                         />
-                                        <div>
+                                        <div className="w-50">
                                             <p className="font-semibold text-gray-700 text-sm">{item.name}</p>
                                             <p className="text-sm text-gray-400">{item.category}</p>
                                             <p className="text-sm text-gray-400">
@@ -413,14 +414,17 @@ export default function Home() {
                                         <input className="w-8 text-[.80rem] px-auto text-center bg-gray-100" type="number" value={item.quantity} readOnly />
                                         <button onClick={() => addQuantity(item)} type="button" className="px-2 bg-gray-50 text-sm cursor-pointer active:bg-gray-100">+</button>
                                     </div>
-                                    <span className="relative -mt-14">
+                                    <span className="relative -ml-6 -mt-14">
                                         <button type="button" onClick={() => removeInCart(item)} >
                                             <GrAdd className="rotate-45 text-red-500 cursor-pointer" />
                                         </button>
                                     </span>
                                 </div>
                             );
-                        })}
+                        }) : (
+                            <p className="text-center text-gray-400 font-medium mt-86">
+                                🛒 Your cart is empty.
+                            </p>)}
                     </div>
                 </div>
 

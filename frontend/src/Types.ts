@@ -15,10 +15,15 @@ export type TProducts = {
     description: string;
     category?: string;
     size?: string;
-    price?: number;
+    price: number;
     image?: string;
     is_available?: boolean;
 }
-export type TCartItem = TProducts & {
+export type TCartItem = TProducts &  TUser &{
     quantity: number
+}
+
+export type Orders = TCartItem & {
+status: string,
+payment_method: string,
 }

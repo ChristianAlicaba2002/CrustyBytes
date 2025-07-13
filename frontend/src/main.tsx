@@ -7,6 +7,7 @@ import Menu from './pages/Menu.tsx'
 import About from './pages/About.tsx'
 import Home from './pages/Home.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import CheckoutPreview from './pages/CheckoutPreview.tsx'
 
 const routes = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const routes = createBrowserRouter([
   {
     path: '/home',
     element: <Home />
+  },
+  {
+    path: '/checkoutPreview/:id',
+    element: <CheckoutPreview />
   }
 ])
 

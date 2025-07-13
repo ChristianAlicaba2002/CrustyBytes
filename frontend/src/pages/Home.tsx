@@ -7,6 +7,7 @@ import type { TCartItem } from "../Types";
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import { PiSignOutBold } from "react-icons/pi";
 import { GrAdd } from "react-icons/gr";
+import { MdHistory } from "react-icons/md";
 import UserLogo from "../assets/images/person.webp";
 
 export default function Home() {
@@ -23,6 +24,8 @@ export default function Home() {
     const [search, setSearch] = useState('');
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [itemInCart, setItemInCart] = useState<TCartItem[] | null>([])
+    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [totalPrice, setTotalPrice] = useState<number>(0);
 
 
     //Search the product
@@ -121,10 +124,10 @@ export default function Home() {
         }
 
         // Check if item already exists in cart
-        const existingIndex = existingCart.findIndex((cartItem: TCartItem) => cartItem.id === item.id);
+        const existingIndex = existingCart.find((cartItem: TCartItem) => cartItem.id === item.id);
 
-        if (existingIndex !== -1) {
-            existingCart[existingIndex].quantity += 1;
+        if (existingIndex) {
+            existingIndex.quantity += 1;
             localStorage.setItem('item', JSON.stringify(existingCart));
 
             // Filter the item if the item in the cart of user is equal on the user who signend 
@@ -178,9 +181,88 @@ export default function Home() {
     }
 
 
-    const checkOutPreview = (userId: string) => {
-        navigate(`/checkoutPreview/${userId}`)
+    //decreased the quantity
+    const minusQuantity = (item: TCartItem) => {
+        const cart = JSON.parse(localStorage.getItem('item') || '[]');
+        const ItemQuantity = cart.find(
+            (cartItem: TCartItem) => cartItem.id === item.id && cartItem.uId === item.uId
+        );
+
+        if (ItemQuantity && ItemQuantity.quantity > 1) {
+            ItemQuantity.quantity -= 1;
+            localStorage.setItem('item', JSON.stringify(cart));
+            setItemInCart(cart.filter((cartItem: TCartItem) => cartItem.uId === user.uId));
+        }
     }
+
+    //Increased the quantity
+    const addQuantity = (item: TCartItem) => {
+        const cart = JSON.parse(localStorage.getItem('item') || '[]');
+
+        const foundItem = cart.find(
+            (cartItem: TCartItem) =>
+                cartItem.id === item.id && cartItem.uId === item.uId
+        );
+
+        if (foundItem) {
+            foundItem.quantity += 1;
+            localStorage.setItem('item', JSON.stringify(cart));
+
+            const updatedCart = cart.filter(
+                (cartItem: TCartItem) => cartItem.uId === user.uId
+            );
+
+            setItemInCart(updatedCart);
+
+            // Calculate the new total from updatedCart
+            const total = updatedCart
+                .filter((cartItem:TCartItem) => selectedItems.includes(String(cartItem.id)))
+                .reduce((sum:number, cartItem:TCartItem) => sum + cartItem.price * cartItem.quantity, 0);
+
+            setTotalPrice(total);
+        }
+    };
+
+
+    const checkboxTheItem = (item: TCartItem) => {
+        const itemIdStr = String(item.id);
+        setSelectedItems((prev) => {
+            if (prev.includes(itemIdStr)) {
+                // Uncheck: remove from selected
+                return prev.filter(id => id !== itemIdStr);
+            } else {
+                // Check: add to selected
+                return [...prev, itemIdStr];
+            }
+        });
+    };
+
+    // Check/Uncheck all items in cart
+    const checkAllItem = (cartItems: TCartItem[] | null) => {
+        if (!cartItems) return;
+
+        if (selectedItems.length === cartItems.length) {
+            setSelectedItems([]);
+            setTotalPrice(0);
+        } else {
+            const selected = cartItems.map(item => String(item.id));
+            setSelectedItems(selected);
+
+            const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            setTotalPrice(total);
+        }
+    };
+
+    // Update checkout to use selected items if any
+    const checkOutPreview = (id: string) => {
+        // If any items are selected, only checkout those; otherwise, all
+        const itemsToCheckout = selectedItems.length > 0
+            ? itemInCart?.filter(item => selectedItems.includes(String(item.id)))
+            : itemInCart;
+
+        // Pass selected item ids as query param or state (example with state)
+        navigate(`/checkoutPreview/${id}`, { state: { items: itemsToCheckout } });
+    };
 
 
     return (
@@ -192,7 +274,7 @@ export default function Home() {
                     {/* Logo & Welcome */}
                     <div className="flex items-center gap-4">
                         <img src={user.image || UserLogo} alt="Logo" className="rounded-full h-10 w-10 object-contain" />
-                        <h1 className="text-2xl font-bold text-orange-500">
+                        <h1 className="text-xl font-bold text-orange-500">
                             Hello, {user.name || 'User'} 👋
                         </h1>
                     </div>
@@ -210,12 +292,15 @@ export default function Home() {
                     </div>
 
                     {/* Cart & Logout */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-8">
                         <button onClick={() => setIsCartOpen(true)} className="relative">
                             <FaShoppingCart className="text-3xl text-orange-500 cursor-pointer" />
                             <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                                 {itemInCart?.length}
                             </span>
+                        </button>
+                        <button onClick={() => setIsCartOpen(true)} className="relative">
+                            <MdHistory className="text-4xl -mt-1.5 -mr-4 text-orange-500 cursor-pointer" />
                         </button>
                         <button
                             onClick={signOutUser}
@@ -274,7 +359,7 @@ export default function Home() {
             </div>
 
             {/* Cart Container */}
-            <div className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 z-50 ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`fixed top-0 right-0 h-full w-full sm:w-[30rem] bg-white shadow-2xl transform transition-transform duration-300 z-50 ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex justify-between items-center px-6 py-4 border-b border-orange-100">
                     <h3 className="text-xl font-bold text-orange-500">Your Cart</h3>
                     <button
@@ -297,40 +382,71 @@ export default function Home() {
                                     className="flex items-center justify-between border-b pb-3"
                                 >
                                     <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedItems.includes(String(item.id))}
+                                            onChange={() => checkboxTheItem(item)}
+                                            className="h-4 w-4 text-orange-500"
+                                        />
                                         <img
                                             src={imageUrl}
                                             alt={item.name}
-                                            className="w-14 h-16 rounded object-cover"
+                                            className="w-18 h-16 rounded object-cover"
                                         />
                                         <div>
-                                            <p className="font-semibold text-gray-700">{item.name}</p>
+                                            <p className="font-semibold text-gray-700 text-sm">{item.name}</p>
                                             <p className="text-sm text-gray-400">{item.category}</p>
-                                            <p className="text-sm text-gray-400">{item.size}</p>
                                             <p className="text-sm text-gray-400">
                                                 Qty: {item.quantity}
                                             </p>
+                                            <span className="text-sm text-orange-500 font-bold whitespace-nowrap">
+                                                &#8369;{item.price}
+                                            </span>
                                         </div>
                                     </div>
-                                    <span className="text-orange-500 font-bold whitespace-nowrap">
-                                        &#8369;{item.price}
-                                    </span>
+                                    <div className="flex ml-28">
+                                        <button
+                                            onClick={() => minusQuantity(item)}
+                                            type="button"
+                                            className="px-2.5 bg-gray-50 text-sm cursor-pointer active:bg-gray-100"
+                                        >-</button>
+                                        <input className="w-8 text-[.80rem] px-auto text-center bg-gray-100" type="number" value={item.quantity} readOnly />
+                                        <button onClick={() => addQuantity(item)} type="button" className="px-2 bg-gray-50 text-sm cursor-pointer active:bg-gray-100">+</button>
+                                    </div>
                                     <span className="relative -mt-14">
                                         <button type="button" onClick={() => removeInCart(item)} >
-                                            <GrAdd className="rotate-45 text-red-500" />
+                                            <GrAdd className="rotate-45 text-red-500 cursor-pointer" />
                                         </button>
                                     </span>
                                 </div>
                             );
                         })}
                     </div>
-                    {/* Add dynamic items here later */}
                 </div>
 
                 {/* Checkout Button */}
                 <div className="p-6 border-t border-orange-100">
-                    <button type="button" onClick={() => checkOutPreview(user.uId)} className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold text-sm transition">
-                        🧾 Checkout
-                    </button>
+                    <label htmlFor="checkAll">
+                        <input
+                            type="checkbox"
+                            id="checkAll"
+                            checked={!!itemInCart?.length && selectedItems.length === itemInCart.length}
+                            onChange={() => checkAllItem(itemInCart)}
+                            className="mr-1.5"
+                        />
+                        Check all
+                    </label>
+                    <div className="flex justify-end -mt-6">
+                        <label className="mr-4 text-sm text-red-700">Total: &#8369;{totalPrice.toLocaleString("en-PH")}</label>
+                        <button
+                            type="button"
+                            onClick={() => checkOutPreview(user.uId)}
+                            className="w-30 cursor-pointer bg-orange-500 text-white py-2 rounded-md font-semibold text-sm transition hover:bg-orange-600"
+                            disabled={!itemInCart || itemInCart.length === 0}
+                        >
+                            🧾 Checkout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

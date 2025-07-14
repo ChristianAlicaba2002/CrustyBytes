@@ -45,7 +45,7 @@ Route::controller(AdminController::class)->group(function () {
 
 //Product Routes
 Route::controller(ProductController::class)->group(function () {
-    Route::post('/add_product', 'create')->name('create.product');
+    Route::post('/add/product', 'create')->name('create.product');
     Route::put('/update/product/{id}', 'update')->name('update.product');
     Route::delete('/archive/product/{id}', 'archive')->name('archive.product');
     Route::delete('/delete/product/{id}', 'delete')->name('delete.product');

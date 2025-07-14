@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id('id')->primary()->autoIncrement(true);
-            $table->string('user_id')->references('uId')->on('users')->onDelete('cascade');
+            $table->id();
+            $table->string('user_id');
             $table->decimal('total_price', 8, 2);
             $table->enum('status', ['pending', 'processing', 'out_for_delivery', 'cancelled'])->default('pending');
             $table->string('payment_method');

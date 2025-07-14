@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_items', function (Blueprint $table) {
-            $table->id('id')->primary()->autoIncrement(true);
-            $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->id('id');
+            $table->integer('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->string('product_name');
             $table->enum('size', ['small', 'medium', 'large']);

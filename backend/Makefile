@@ -1,4 +1,4 @@
-.PHONY: run migrate rollback fresh
+.PHONY: run migrate rollback fresh test
 
 run:
 	php artisan serve
@@ -16,3 +16,6 @@ fresh:
 	php artisan migrate:fresh
 	php artisan db:seed --class="AdminSeeder"
 	echo "Database refreshed and seeded with admin data."
+
+test:
+	php artisan test

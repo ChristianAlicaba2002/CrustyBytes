@@ -17,8 +17,10 @@ class OrdersTest extends TestCase
 
         $data = [
             'user_id' => 'asd212379a8sd12e12',
-            'total_price' => 99,
-            99,
+            'name' => 'Christian Alicaba',
+            'phone_number' => '09565376522',
+            'address' => 'Liloan Cebu',
+            'total_price' => 99.99,
             'status' => 'pending',
             'payment_method' => 'Cash on Delivery',
         ];

@@ -59,17 +59,7 @@ class OrderController extends Controller
         $user_order = User::where('uId', $request->user_id)->first();
 
         if ($user_order) {
-            // Correct order creation
-            // $order = Orders::create([
-            //     'user_id' => $request->user_id,
-            //     'name' => $request->name,
-            //     'phone_number' => $request->phone_number,
-            //     'address' => $request->address,
-            //     'total_price' => $request->total_price,
-            //     'status' => 'pending',
-            //     'payment_method' => $request->payment_method,
-            // ]);
-
+    
             $order = $this->orderHandler->create(
                 $request->user_id,
                 $request->name,

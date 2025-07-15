@@ -21,4 +21,4 @@ Route::post('users',[UserController::class , 'createUser']);
 Route::resource('/products', ProductAPIController::class);
 
 //Order Routes
-Route::resource('/order', OrderController::class);
+Route::resource('/orders', OrderController::class);

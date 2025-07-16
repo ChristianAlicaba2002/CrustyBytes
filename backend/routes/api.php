@@ -15,7 +15,7 @@ Route::get('/storage/{imageName}', function ($imageName) {
 });
 
 //User Routes
-Route::post('users',[UserController::class , 'createUser']);
+Route::resource('/users', UserController::class);
 
 //Product Routes
 Route::resource('/products', ProductAPIController::class);

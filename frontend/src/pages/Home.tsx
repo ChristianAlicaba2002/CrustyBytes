@@ -61,17 +61,23 @@ export default function Home() {
     //Passing the user data in the BACKEND
     useEffect(() => {
         const postUserData = async () => {
+
             try {
                 const response = await fetch("http://localhost:8000/api/users", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ ...user })
+                    body: JSON.stringify({...user})
                 });
+
                 if (!response.ok) {
                     console.log(response.status)
                 }
+
+                const userData = await response.json()
+                if(userData) return console.log(userData)
+
             } catch (error) {
                 console.error(error)
             }
@@ -225,6 +231,7 @@ export default function Home() {
     };
 
 
+    //Check each item
     const checkboxTheItem = (item: TCartItem) => {
         const itemIdStr = String(item.id);
         setSelectedItems((prev) => {
@@ -274,7 +281,9 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     {/* Logo & Welcome */}
                     <div className="flex items-center gap-4">
-                        <img src={user.image || UserLogo} alt="Logo" className="rounded-full h-10 w-10 object-contain" />
+                        <Link to={'/user-information'}>
+                            <img title="Go to your details" src={user.image || UserLogo} alt="Logo" className="rounded-full h-10 w-10 object-contain" />
+                        </Link>
                         <h1 className="text-xl font-bold text-orange-500">
                             Hello, {user.name || 'User'} 👋
                         </h1>

@@ -6,6 +6,7 @@ import Login from './pages/Login.tsx'
 import Menu from './pages/Menu.tsx'
 import About from './pages/About.tsx'
 import Home from './pages/Home.tsx'
+import UserInformation from './pages/UserInformation.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import CheckoutPreview from './pages/CheckoutPreview.tsx'
 import ViewHistory from './pages/ViewHistory.tsx'
@@ -30,6 +31,10 @@ const routes = createBrowserRouter([
   {
     path: '/home',
     element: <Home />
+  },
+  {
+    path: '/user-information',
+    element: <UserInformation />
   },
   {
     path: '/view-history',

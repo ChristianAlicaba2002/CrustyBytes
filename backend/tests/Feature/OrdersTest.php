@@ -25,7 +25,7 @@ class OrdersTest extends TestCase
             'payment_method' => 'Cash on Delivery',
         ];
 
-        $response = $this->postJson(route('order.store'), $data);
+        $response = $this->postJson(route('orders.store'), $data);
         $response->assertStatus(200);
     }
 }

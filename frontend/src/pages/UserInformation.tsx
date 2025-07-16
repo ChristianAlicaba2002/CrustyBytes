@@ -154,7 +154,7 @@ export default function UserInformation() {
                     <div className="mb-10">
                         <h3 className="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Account Information
                             <div className="edit flex justify-end -mt-4">
-                                <CiEdit className="text-2xl cursor-pointer" onClick={()=> setContactForm((prev) =>  !prev)} />
+                                <CiEdit className="text-2xl cursor-pointer" onClick={() => setContactForm((prev) => !prev)} />
                             </div>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -221,6 +221,7 @@ export default function UserInformation() {
                                         type="tel"
                                         id="phone_number"
                                         name="phone_number"
+                                        maxLength={11}
                                         value={userData.phone_number}
                                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         placeholder="+63 912 345 6789"
